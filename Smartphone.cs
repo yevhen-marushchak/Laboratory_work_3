@@ -1,4 +1,6 @@
-﻿namespace Laboratory_work_1
+﻿using System;
+
+namespace Laboratory_work_3
 {
     public class Smartphone : Device
     {
@@ -19,37 +21,47 @@
                 BatteryLife = intensiveUsage ? 16 : 48; // 2000-3000 мАг: 16 год для ігор/відео, 48 год для роботи
         }
 
-        public override void Work()
+        protected override bool PreconditionsMet(string taskName)
         {
-            if (!IsPoweredOn || !IsSoftwareInstalled || !IsInternetConnected)
+            bool isBatterySufficient = BatteryLife > 0;
+            switch (taskName)
             {
-                Console.WriteLine("Не можна працювати! Увімкніть пристрій, встановіть ПЗ і підключіть інтернет.");
-                return;
+                case "Робота":
+                    return base.PreconditionsMet(taskName) && isBatterySufficient;
+                case "Ігри":
+                    return base.PreconditionsMet(taskName) && isBatterySufficient;
+                case "Відео":
+                    return base.PreconditionsMet(taskName) && isBatterySufficient;
+                default:
+                    return false;
             }
-            UpdateBatteryLife(false);
-            Console.WriteLine($"Виконується робота...");
         }
 
-        public override void PlayGames()
+        protected override void DoTask(string taskName)
         {
-            if (!IsPoweredOn || !IsSoftwareInstalled || !IsInternetConnected || !AreSpeakersConnected)
-            {
-                Console.WriteLine("Не можна грати в ігри! Увімкніть пристрій, встановіть ПЗ, підключіть інтернет і колонки.");
-                return;
-            }
-            UpdateBatteryLife(true);
-            Console.WriteLine($"Граємо в ігри...");
-        }
+            bool intensiveUsage = taskName == "Ігри" || taskName == "Відео";
 
-        public override void WatchVideos()
-        {
-            if (!IsPoweredOn || !IsSoftwareInstalled || !AreSpeakersConnected)
+            if (intensiveUsage)
+                UpdateBatteryLife(true);
+            else
+                UpdateBatteryLife(false);
+
+            switch (taskName)
             {
-                Console.WriteLine("Не можна дивитися відео! Увімкніть пристрій, встановіть ПЗ і підключіть колонки.");
-                return;
+                case "Робота":
+                    OnDeviceEvent("Виконується робота...");
+                    break;
+                case "Ігри":
+                    OnDeviceEvent("Граємо в ігри...");
+                    break;
+                case "Відео":
+                    OnDeviceEvent("Дивимось відео...");
+                    break;
+                default:
+                    OnDeviceEvent("Невідоме завдання.");
+                    break;
             }
-            UpdateBatteryLife(true);
-            Console.WriteLine($"Дивимось відео...");
+            OnDeviceEvent($"Рівень заряду: {BatteryLife} год");
         }
     }
 }

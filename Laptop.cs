@@ -1,4 +1,6 @@
-﻿namespace Laboratory_work_1
+﻿using System;
+
+namespace Laboratory_work_3
 {
     public class Laptop : Device
     {
@@ -7,7 +9,7 @@
         public string Motherboard { get; set; }
         public string Storage { get; set; }
         public int RAM { get; set; }
-        public int BatteryCapacity { get; private set; }
+        public int BatteryCapacity { get; set; }
         public int BatteryLife { get; private set; }
 
         public Laptop(string name, string gpu, string cpu, string motherboard, string storage, int ram, int batteryCapacity)
@@ -25,41 +27,36 @@
         private void UpdateBatteryLife(bool intensiveUsage)
         {
             if (BatteryCapacity >= 5000)
-                BatteryLife = intensiveUsage ? 4 : 12;
+                BatteryLife = intensiveUsage ? 4 : 12; // 5000+ мАг: 4 год для ігор/відео, 12 год для роботи
             else
-                BatteryLife = intensiveUsage ? 16 : 48;
+                BatteryLife = intensiveUsage ? 16 : 48; // 2000-3000 мАг: 16 год для ігор/відео, 48 год для роботи
         }
 
-        public override void Work()
+        protected override void DoTask(string taskName)
         {
-            if (!IsPoweredOn || !IsSoftwareInstalled || !IsInternetConnected)
-            {
-                Console.WriteLine("Не можна працювати! Переконайтеся, що ПК увімкнено, встановлено ПЗ та є підключення до інтернету.");
-                return;
-            }
-            Console.WriteLine("Робота виконується...");
-        }
+            bool intensiveUsage = taskName == "Ігри" || taskName == "Відео";
 
-        public override void PlayGames()
-        {
-            if (!IsPoweredOn || !IsSoftwareInstalled || !IsInternetConnected || !AreSpeakersConnected)
-            {
-                Console.WriteLine("Не можна грати в ігри! Увімкніть пристрій, встановіть ПЗ, підключіть інтернет і колонки.");
-                return;
-            }
-            UpdateBatteryLife(true);
-            Console.WriteLine($"Граємо в ігри...");
-        }
+            if (intensiveUsage)
+                UpdateBatteryLife(true);
+            else
+                UpdateBatteryLife(false);
 
-        public override void WatchVideos()
-        {
-            if (!IsPoweredOn || !IsSoftwareInstalled || !AreSpeakersConnected)
+            switch (taskName)
             {
-                Console.WriteLine("Не можна дивитися відео! Увімкніть пристрій, встановіть ПЗ і підключіть колонки.");
-                return;
+                case "Робота":
+                    OnDeviceEvent("Виконується робота...");
+                    break;
+                case "Ігри":
+                    OnDeviceEvent("Граємо в ігри...");
+                    break;
+                case "Відео":
+                    OnDeviceEvent("Дивимось відео...");
+                    break;
+                default:
+                    OnDeviceEvent("Невідоме завдання.");
+                    break;
             }
-            UpdateBatteryLife(true);
-            Console.WriteLine($"Дивимось відео...");
+            OnDeviceEvent($"Рівень заряду: {BatteryLife} год");
         }
     }
 }

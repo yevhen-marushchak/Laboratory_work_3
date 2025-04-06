@@ -1,11 +1,15 @@
-﻿using Laboratory_work_1;
+﻿using System;
 using System.Text;
 
-class Program
+namespace Laboratory_work_3
 {
-    static void Main()
+    class Program
     {
-        ConsoleMenu menu = new ConsoleMenu();
-        menu.ShowMainMenu();
+        static void Main(string[] args)
+        {
+            Console.OutputEncoding = Encoding.UTF8;
+            ConsoleMenu menu = new ConsoleMenu();
+            menu.Start();
+        }
     }
 }

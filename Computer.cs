@@ -1,4 +1,10 @@
-﻿namespace Laboratory_work_1
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Laboratory_work_3
 {
     public class Computer : Device
     {
@@ -18,34 +24,23 @@
             RAM = ram;
         }
 
-        public override void Work()
+        protected override void DoTask(string taskName)
         {
-            if (!IsPoweredOn || !IsSoftwareInstalled || !IsInternetConnected)
+            switch (taskName)
             {
-                Console.WriteLine("Не можна працювати! Переконайтеся, що ПК увімкнено, встановлено ПЗ та є підключення до інтернету.");
-                return;
+                case "Робота":
+                    OnDeviceEvent("Робота виконується...");
+                    break;
+                case "Ігри":
+                    OnDeviceEvent("Граємо в ігри...");
+                    break;
+                case "Відео":
+                    OnDeviceEvent("Дивимось відео...");
+                    break;
+                default:
+                    OnDeviceEvent("Невідоме завдання.");
+                    break;
             }
-            Console.WriteLine("Робота виконується...");
-        }
-
-        public override void PlayGames()
-        {
-            if (!IsPoweredOn || !IsSoftwareInstalled || !IsInternetConnected || !AreSpeakersConnected)
-            {
-                Console.WriteLine("Не можна грати в ігри! Переконайтеся, що ПК увімкнено, встановлено ПЗ, є інтернет і колонки.");
-                return;
-            }
-            Console.WriteLine("Граємо в ігри...");
-        }
-
-        public override void WatchVideos()
-        {
-            if (!IsPoweredOn || !IsSoftwareInstalled || !AreSpeakersConnected)
-            {
-                Console.WriteLine("Не можна дивитися відео! Переконайтеся, що ПК увімкнено, встановлено ПЗ і підключені колонки.");
-                return;
-            }
-            Console.WriteLine("Дивимось відео...");
         }
     }
 }
